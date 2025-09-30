@@ -6,6 +6,9 @@ def scan_barcode():
   print("Ready for the barcode scan:")
   barcode_data = input("Scan barcode").strip()
   return barcode_data
+def inkbay_csv(inkbay_id, csv_path):
+  try:
+    order = pd.read_csv(csv_path)
 def print_with_bpac(template_path, asset_data):
   try: 
     pythoncom.CoInitialize()
