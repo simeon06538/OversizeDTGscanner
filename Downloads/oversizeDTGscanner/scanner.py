@@ -9,6 +9,12 @@ def scan_barcode():
 def inkbay_csv(inkbay_id, csv_path):
   try:
     order = pd.read_csv(csv_path)
+    order_data = order[
+      (order['Image URL'] == inkbay_id)
+    ]
+  except Exception as e:
+      print(f"unable to read CSV, error {e}")
+
 def print_with_bpac(template_path, asset_data):
   try: 
     pythoncom.CoInitialize()
@@ -37,6 +43,7 @@ def print_with_bpac(template_path, asset_data):
     pythoncom.CoUninitialize()
 
 def main():
+  inkbay_csv(scan_barcode(), "C:\Users\simeo\Downloads\oversizeDTGscanner\e7437335-152b-422e-b35a-eb26543b99f9(4).csv")
   print("yo")
 #def inkbay_order(inkbay_id, order_data):
 
