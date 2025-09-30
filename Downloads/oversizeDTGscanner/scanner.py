@@ -1,7 +1,11 @@
 import win32com.client
 import pythoncom
 import os 
-
+import pandas as pd 
+def scan_barcode():
+  print("Ready for the barcode scan:")
+  barcode_data = input("Scan barcode").strip()
+  return barcode_data
 def print_with_bpac(template_path, asset_data):
   try: 
     pythoncom.CoInitialize()
@@ -29,6 +33,8 @@ def print_with_bpac(template_path, asset_data):
   finally:
     pythoncom.CoUninitialize()
 
+def main():
+  print("yo")
 #def inkbay_order(inkbay_id, order_data):
 
         
