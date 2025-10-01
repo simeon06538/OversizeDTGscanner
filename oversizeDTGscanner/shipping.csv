@@ -1,0 +1,23 @@
+"Shipping Lines :",
+"Carrier Identifier",
+Code,GroundAdvantage
+"Fulfillment Service ID",
+Source,usps
+Title,"Ground Advantage"
+,
+"Shipping Address :",
+first_name,Joseph
+address1,"112 Chattooga Place"
+phone,+12565034782
+city,"New Market"
+zip,35761
+province,Alabama
+country,"United States"
+last_name,Brazelton
+address2,
+company,
+latitude,34.8493225
+longitude,-86.4640753
+name,"Joseph Brazelton"
+country_code,US
+province_code,AL
