@@ -1,2 +1,1 @@
-# Barcode Scanner MVP
-
+Barcode Scanner MVP
