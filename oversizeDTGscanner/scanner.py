@@ -3,14 +3,15 @@ import pythoncom
 import os 
 import pandas as pd 
 import re
-
-def scan_barcode():
-  print("Ready for the barcode scan:")
-  barcode_data = input("Scan barcode:")
-  return barcode_data.strip()
+import webbrowser
 
 #
+def barcode_scan():
+  while True:
+    barcode_data = input("Scan barcode:").strip()
+    return barcode_data
 
+#- Extracting Inkbay Id from Item-Options Column 
 def extract_inkbay_id(options_text):
   if pd.isna(options_text) or not isinstance(options_text, str):
     return None
@@ -21,13 +22,33 @@ def extract_inkbay_id(options_text):
     return match.group(1)
   return None
 
+# - Extracting Color From Item-Options Column
+def extract_color_from_options(options_text):
+  if pd.isna(options_text) or not isinstance(options_text, str):
+    return 'N/A'
+
+  color_match = re.search(r'inkybay product color:\s*([^,]+)', options_text, re.IGNORECASE)
+
+  if color_match:
+    return color_match.group(1)
+  
+  return 'N/A'
+
+#not used 
+def extract_time_from_date(date_string):
+  if pd.isna(date_string) or not isinstance(date_string, str):
+    return 'N/A'
+  time_match = re.search(r'(\d+:\d+:\d+\s*)', date_string, re.IGNORECASE)
+  if time_match:
+    return time_match.group(1)
+  return 'NA'
 #
 
 def inkbay_csv(inkbay_id, csv_path):
   try:
     order = pd.read_csv(csv_path)
     order_data = order[
-      (order['Item-Options'] == inkbay_id)
+      (order['Item - Options'] == inkbay_id)
     ]
     matching_rows = []
     for index, row in order.iterrows():
@@ -36,10 +57,20 @@ def inkbay_csv(inkbay_id, csv_path):
 
       if extracted_id == inkbay_id:
         matching_rows.append(row)
-        print(f"Found matching order!")
+        print(f"Order Found")
+
 
         return {
-          'order-number' : row.get('Order - Number', 'N/A')
+          'order-number' : row.get('Order - Number', 'N/A'),
+          'date/time' : row.get('Date - Order Date', 'N/A'),
+          'url' : row.get('Item - Image URL', 'N/A'),
+          #'time' : extract_time_from_date(row.get('Date - Order Date', 'N/A')),
+          'color' : extract_color_from_options(row.get('Item - Options', 'N/A')),
+          'sku' : row.get('Item - SKU', 'N/A'), 
+          #count?
+
+
+
         }
         
     if not matching_rows:
@@ -50,6 +81,8 @@ def inkbay_csv(inkbay_id, csv_path):
   except FileNotFoundError:
     print(f"CSV file not found :")
     return None; 
+
+#
 
 def print_with_bpac(template_path, asset_data):
   try: 
@@ -79,9 +112,15 @@ def print_with_bpac(template_path, asset_data):
     pythoncom.CoUninitialize()
 
 def main():
-  barcode_data = scan_barcode()
-  csv_path = r'C:\Users\simeo\Downloads\oversizeDTGscanner\e7437335-152b-422e-b35a-eb26543b99f9(4).csv'
-  order_data = inkbay_csv(barcode_data, csv_path)
+  scan = barcode_scan()
+  csv_path = 'C:/Users/simeo/Downloads/oversizeDTGscanner/e7437335-152b-422e-b35a-eb26543b99f9(4).csv'
+  order_data = inkbay_csv(scan, csv_path)
+  print(order_data)
+  webbrowser.open(order_data['url'])
+  
+
+if __name__ == "__main__":
+  main()
   
 #def inkbay_order(inkbay_id, order_data):
 
