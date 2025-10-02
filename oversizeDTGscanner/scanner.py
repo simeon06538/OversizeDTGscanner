@@ -34,6 +34,19 @@ def extract_color_from_options(options_text):
   
   return 'N/A'
 
+#- Extracting Size from the SDK 
+def extract_size_from_sdk(options_text):
+  if pd.isna(options_text) or not isinstance(options_text, str):
+    return 'N/A'
+  
+  size_match = re.search(r'inkybay size quantity:\s*([^:]+?)\s*:\s*\d+', options_text, re.IGNORECASE)
+
+  if size_match:
+    size = size_match.group(1)
+    return size
+  
+  return 'N/A'
+
 #not used 
 def extract_time_from_date(date_string):
   if pd.isna(date_string) or not isinstance(date_string, str):
@@ -66,7 +79,10 @@ def inkbay_csv(inkbay_id, csv_path):
           'url' : row.get('Item - Image URL', 'N/A'),
           #'time' : extract_time_from_date(row.get('Date - Order Date', 'N/A')),
           'color' : extract_color_from_options(row.get('Item - Options', 'N/A')),
-          'sku' : row.get('Item - SKU', 'N/A'), 
+          'sku' : row.get('Item - SKU', 'N/A'),
+          'size' : extract_size_from_sdk(row.get('Item - SKU', 'N/A')),
+          'address' : row.get('Ship To - Address 1' , 'N/A')
+        
           #count?
 
 
@@ -82,8 +98,9 @@ def inkbay_csv(inkbay_id, csv_path):
     print(f"CSV file not found :")
     return None; 
 
-#
+#brother sdk makes no sense 
 
+#vibe coded function:
 def print_with_bpac(template_path, asset_data):
   try: 
     pythoncom.CoInitialize()
@@ -112,13 +129,23 @@ def print_with_bpac(template_path, asset_data):
     pythoncom.CoUninitialize()
 
 def main():
-  scan = barcode_scan()
-  csv_path = 'C:/Users/simeo/Downloads/oversizeDTGscanner/e7437335-152b-422e-b35a-eb26543b99f9(4).csv'
-  order_data = inkbay_csv(scan, csv_path)
-  print(order_data)
-  webbrowser.open(order_data['url'])
   
+  
+  
+  csv_path = 'C:/Users/simeo/Downloads/oversizeDTGscanner/e7437335-152b-422e-b35a-eb26543b99f9(4).csv'
+  
+  
+  
+  
+  try: 
+    while True:
+      scan = barcode_scan()
+      order_data = inkbay_csv(scan, csv_path)
+      webbrowser.open(order_data['url'])
+      print(order_data)
 
+  except KeyboardInterrupt:
+    main()
 if __name__ == "__main__":
   main()
   
